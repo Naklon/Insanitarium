@@ -7,8 +7,9 @@ public:
 	static void DrawMainMenu();
 	static void FadeMainMenu();
 	static void DrawOptions();
-	static bool IfMouseInTriangle(POINT pt, POINT v1, POINT v2, POINT v3);
-	static float Sign(POINT p1, POINT p2, POINT p3);
+	static bool IfMouseInTriangle(POINT, POINT, POINT, POINT);
+	static float Sign(POINT, POINT, POINT);
+	static bool IfMouseInCircle(POINT, POINT, float);
 
 	MainMenu();
 	~MainMenu();
@@ -16,4 +17,3 @@ public:
 private:
 	
 };
-

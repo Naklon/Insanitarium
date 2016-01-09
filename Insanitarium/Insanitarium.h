@@ -9,4 +9,4 @@ void OnMouseMove(int, int);
 void OnTimer(int);
 void OnMousePress(int button, int state, int x, int y);
 void LoadSettings();
-
+void LoadGame();

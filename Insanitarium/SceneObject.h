@@ -1,13 +1,13 @@
 #pragma once
 
-class CSceneObject
+class SceneObject
 {
 public:
 	
 
-	CSceneObject(void); 
-	~CSceneObject(void); 
-	virtual void Initialize(void) = 0; 
+	SceneObject(void); 
+	~SceneObject(void); 
+	virtual void Initialize(void) = 0;
 	virtual void Update(void) = 0; 
 	virtual void Render(void) = 0; 
 

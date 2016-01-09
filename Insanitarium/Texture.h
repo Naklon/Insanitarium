@@ -1,12 +1,12 @@
 #pragma once
-class CTexture
+class Textures
 {
 public:
 	bool IsLoaded;
 
-	CTexture(char *);
-	CTexture(char *, int, int);
-	~CTexture(void);
+	Textures(char *);
+	Textures(char *, int, int);
+	~Textures(void);
 	bool Load(void);
 	GLuint GetId(void);
 

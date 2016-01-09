@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-vec3 CCollisionDetection::GetPositionAfterWorldCollisions(vec3 pos0, vec3 pos1, CPlayer &player, vector<CSceneObject *> * objects, int step, CCollisionPolygon * exclude) {
+vec3 CCollisionDetection::GetPositionAfterWorldCollisions(vec3 pos0, vec3 pos1, GamePlayer &player, vector<SceneObject *> * objects, int step, CCollisionPolygon * exclude) {
 
 	// Funkcja bêdzie wywo³ywana reukrencyjnie. Jeœli poziom zagnie¿d¿enia przekroczy 10,
 	// to zwracamy po prostu pos1 jako nasz¹ now¹, "zmodyfikowan¹" pozycjê.
@@ -18,17 +18,17 @@ vec3 CCollisionDetection::GetPositionAfterWorldCollisions(vec3 pos0, vec3 pos1, 
 	// o najbli¿szej z kolizji (jeœli jakakolwiek zostanie wykryta).
 	for (int i = 0; i < objects->size(); ++i) {
 
-		// W naszym przyk³adzie chcemy sprawdzaæ kolizje jedynie z obiektami klasy CWall, bo z nimi
+		// W naszym przyk³adzie chcemy sprawdzaæ kolizje jedynie z obiektami klasy StaticObject, bo z nimi
 		// bêdziemy wiedzieli co zrobiæ. Ten fragment na pewno nale¿y zmodyfikowaæ zale¿nie
 		// od w³asnych potrzeb.
 
-		// Rzutujemy nasz wskaŸnik na "jakiœ" obiekt na wskaŸnik na CWall.
-		CWall * wall = reinterpret_cast<CWall *>(objects->at(i));
+		// Rzutujemy nasz wskaŸnik na "jakiœ" obiekt na wskaŸnik na StaticObject.
+		StaticObject * wall = reinterpret_cast<StaticObject *>(objects->at(i));
 
 		// Jeœli u¿yliœmy reinterpret_cast zamiast zwyk³ego static_cast (lub
-		// równowa¿nego zapisu (CWall*)(objects->at(i)), to w momencie gdy rzutowanie
+		// równowa¿nego zapisu (StaticObject*)(objects->at(i)), to w momencie gdy rzutowanie
 		// nie jest mo¿liwe, otrzymamy wartoœæ NULL. Wtedy wiadomo, ¿e nie jest to na pewno
-		// CWall i pomijamy ten obiekt.
+		// StaticObject i pomijamy ten obiekt.
 		// Pomijamy te¿ obiekt jeœli jest to ten sam, co obiekt do którego adres zosta³
 		// przekazany w parametrze - zostanie to u¿yte do rozwi¹zania sytuacji gdy odbicie siê
 		// od jednego obiektu skutkuje odbiciem siê od drugiego.
@@ -45,8 +45,8 @@ vec3 CCollisionDetection::GetPositionAfterWorldCollisions(vec3 pos0, vec3 pos1, 
 	// Jeœli uda³o siê wykryæ jak¹kolwiek kolizjê (wtedy collision zawiera informacje o tej wystêpuj¹cej najbli¿ej)...
 	if (collision.hasCollided)
 	{
-		Scene->LastCollisionPoint = collision.planeIntersectionPosition;
-		Scene->MarkCollision = true;
+		Scene1->LastCollisionPoint = collision.planeIntersectionPosition;
+		Scene1->MarkCollision = true;
 
 		
 		pos1 = CalculateReaction(pos0, pos1, collision);
@@ -68,10 +68,11 @@ vec3 CCollisionDetection::CalculateReaction(vec3 pos0, vec3 pos1, SCollision &co
 	
 	float eps;
 
-	if (keystate['w'] || keystate['s'] || keystate['a'] || keystate['d'])
+	if (keystate['w'] || keystate['a'] || keystate['s'] || keystate['d'])
 		eps = .015f;
 	else
 		eps = 0;
+	
 
 	vec3 vel = pos1 - pos0;
 	vec3 destPoint = pos0 + vel;
@@ -90,7 +91,7 @@ vec3 CCollisionDetection::CalculateReaction(vec3 pos0, vec3 pos1, SCollision &co
 	// Wyznaczenie nowej pozycji:
 	pos1 = pos0 + vel * collision.t; // Doci¹gniêcie najbli¿ej do œciany.
 	pos1 = pos1 + newVelocityVector; // Przesuniêcie wzd³u¿ p³aszczyzny "slidingu".
-
+	pos1 = pos1 + collision.reaction *eps;
 	// Zwracamy now¹ pozycjê.
 	return pos1;
 }

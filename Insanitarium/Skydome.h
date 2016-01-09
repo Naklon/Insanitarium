@@ -1,7 +1,7 @@
 #pragma once
 
 
-class CSkydome : public CSceneObject
+class CSkydome : public SceneObject
 {
 public:
 	CSkydome(void);
@@ -12,6 +12,6 @@ public:
 
 protected:
 	GLuint _displayListId;
-	CTexture * _skyTexture;
+	Textures * _skyTexture;
 };
 

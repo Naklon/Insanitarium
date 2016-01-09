@@ -1,0 +1,7 @@
+Window true
+Sensitivity 100
+Sizex 1920
+Sizey 1080
+Sound 100
+Music 100
+FirstLaunch false

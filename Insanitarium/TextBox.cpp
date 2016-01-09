@@ -21,16 +21,15 @@ TextBox::TextBox(float X1, float Y1, float X2, float Y2, float X3, float Y3, flo
 		x4 = X4;
 		y4 = Y4;
 
-		textTexture = new CTexture(tex, GL_LINEAR, GL_LINEAR_MIPMAP_LINEAR);
-		textTexture->Load();
+		textTexture = new Textures(tex, GL_LINEAR, GL_LINEAR_MIPMAP_LINEAR);
+		
 }
-
 
 TextBox::~TextBox()
 {
 }
 
-void TextBox::Render(float alpha)
+void TextBox::Render(float alpha, float X1, float Y1, float X2, float Y2, float X3, float Y3, float X4, float Y4)
 {
 
 	glPushMatrix();
@@ -54,11 +53,18 @@ void TextBox::Render(float alpha)
 	glDisable(GL_TEXTURE_2D);
 
 	glPopMatrix();
+	x1 / glutGet(GLUT_WINDOW_WIDTH);
+	this->Resize(X1,Y1,X2,Y2,X3,Y3,X4,Y4);
+}
+
+void TextBox::Load()
+{
+	textTexture->Load();
 }
 
 void TextBox::ChangeTexture(char *newTex)
 {
-	CTexture* tempTex = new CTexture(newTex, GL_LINEAR, GL_LINEAR_MIPMAP_LINEAR);
+	Textures* tempTex = new Textures(newTex, GL_LINEAR, GL_LINEAR_MIPMAP_LINEAR);
 	tempTex->Load();
 	this->textTexture = tempTex;
 }

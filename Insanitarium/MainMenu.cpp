@@ -1,7 +1,9 @@
 #include "stdafx.h"
 #include "MainMenu.h"
 
+float radius;
 float alphamenu = 0.8;
+
 bool iffade = false;
 bool ifSound1 = true;
 bool ifSound2 = true;
@@ -16,6 +18,12 @@ bool ifSoundOptions5 = true;
 bool ifSoundOptions6 = true;
 bool ifSoundOptions7 = true;
 bool ifSoundOptions8 = true;
+bool ifSoundOptions9 = true;
+bool ifSoundOptions10 = true;
+bool ifSoundOptions11 = true;
+bool ifSoundOptions12 = true;
+bool res1;
+bool res2;
 bool loaded = false;
 bool loadedOptions = false;
 
@@ -25,6 +33,8 @@ int musicLeftColor;
 int musicRightColor;
 int soundLeftColor;
 int soundRightColor;
+int res1Color;
+int res2Color;
 int musicOption;
 int soundOption;
 int mouseOption;
@@ -52,6 +62,18 @@ TextBox* SoundVol = new TextBox();
 
 TextBox* MouseSen = new TextBox();
 
+TextBox* WindowedYes = new TextBox();
+
+TextBox* WindowedNo = new TextBox();
+
+TextBox* Windowed = new TextBox();
+
+TextBox* Resolution = new TextBox();
+
+TextBox* ResHD = new TextBox();
+
+TextBox* Res1280x720 = new TextBox();
+
 POINT mousePoint;
 
 POINT musicLeft1;
@@ -78,12 +100,26 @@ POINT mouseRight1;
 POINT mouseRight2;
 POINT mouseRight3;
 
+POINT resolution1;
+POINT resolution2;
+
 MainMenu::MainMenu()
 {
 }
 
 void MainMenu::DrawMenu()
 {
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	glOrtho(0.0, glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), 0.0, -1.0, 10.0);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glDisable(GL_CULL_FACE);
+
+	glDisable(GL_LIGHTING);
+	glEnable(GL_BLEND);
+
 	TextBox ResumeButton(glutGet(GLUT_WINDOW_WIDTH)*0.43, glutGet(GLUT_WINDOW_HEIGHT)*0.39, glutGet(GLUT_WINDOW_WIDTH)*0.43, glutGet(GLUT_WINDOW_HEIGHT)*0.46,
 		glutGet(GLUT_WINDOW_WIDTH)*0.57, glutGet(GLUT_WINDOW_HEIGHT)*0.46, glutGet(GLUT_WINDOW_WIDTH)*0.57, glutGet(GLUT_WINDOW_HEIGHT)*0.39, "Resources\\Resume.bmp");
 
@@ -120,8 +156,10 @@ void MainMenu::DrawMenu()
 
 	////////////////////////////Rysowanie elementów menu
 
-	ResumeButton.Render(0.8);
-	ExitButton.Render(0.8);
+	ResumeButton.Render(0.8, glutGet(GLUT_WINDOW_WIDTH)*0.43, glutGet(GLUT_WINDOW_HEIGHT)*0.39, glutGet(GLUT_WINDOW_WIDTH)*0.43, glutGet(GLUT_WINDOW_HEIGHT)*0.46,
+		glutGet(GLUT_WINDOW_WIDTH)*0.57, glutGet(GLUT_WINDOW_HEIGHT)*0.46, glutGet(GLUT_WINDOW_WIDTH)*0.57, glutGet(GLUT_WINDOW_HEIGHT)*0.39);
+	ExitButton.Render(0.8, glutGet(GLUT_WINDOW_WIDTH)*0.43, glutGet(GLUT_WINDOW_HEIGHT)*0.52, glutGet(GLUT_WINDOW_WIDTH)*0.43, glutGet(GLUT_WINDOW_HEIGHT)*0.59,
+		glutGet(GLUT_WINDOW_WIDTH)*0.57, glutGet(GLUT_WINDOW_HEIGHT)*0.59, glutGet(GLUT_WINDOW_WIDTH)*0.57, glutGet(GLUT_WINDOW_HEIGHT)*0.52);
 
 	/////////////////////////////Czarny pasek z elementami menu
 	glBegin(GL_QUADS);
@@ -141,10 +179,21 @@ void MainMenu::DrawMenu()
 
 void MainMenu::DrawMainMenu()
 {
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	glOrtho(0.0, glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), 0.0, -1.0, 10.0);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glDisable(GL_CULL_FACE);
+
+	glDisable(GL_LIGHTING);
+	glEnable(GL_BLEND);
+
 	if (!loaded) //Wczytywanie obiektów tekstu
 	{
-		Insanitarium = new TextBox(glutGet(GLUT_WINDOW_WIDTH)*0.02, glutGet(GLUT_WINDOW_HEIGHT)*0.13, glutGet(GLUT_WINDOW_WIDTH)*0.02, glutGet(GLUT_WINDOW_HEIGHT)*0.43,
-			glutGet(GLUT_WINDOW_WIDTH)*0.98, glutGet(GLUT_WINDOW_HEIGHT)*0.43, glutGet(GLUT_WINDOW_WIDTH)*0.98, glutGet(GLUT_WINDOW_HEIGHT)*0.13, "Resources/Logo.bmp");
+		Insanitarium = new TextBox(glutGet(GLUT_WINDOW_WIDTH)*0.02, glutGet(GLUT_WINDOW_HEIGHT)*0.07, glutGet(GLUT_WINDOW_WIDTH)*0.02, glutGet(GLUT_WINDOW_HEIGHT)*0.37,
+			glutGet(GLUT_WINDOW_WIDTH)*0.98, glutGet(GLUT_WINDOW_HEIGHT)*0.37, glutGet(GLUT_WINDOW_WIDTH)*0.98, glutGet(GLUT_WINDOW_HEIGHT)*0.07, "Resources/Logo.bmp");
 
 		Play = new TextBox(glutGet(GLUT_WINDOW_WIDTH)*0.05, glutGet(GLUT_WINDOW_HEIGHT)*0.6, glutGet(GLUT_WINDOW_WIDTH)*0.05, glutGet(GLUT_WINDOW_HEIGHT)*0.65,
 			glutGet(GLUT_WINDOW_WIDTH)*0.2, glutGet(GLUT_WINDOW_HEIGHT)*0.65, glutGet(GLUT_WINDOW_WIDTH)*0.2, glutGet(GLUT_WINDOW_HEIGHT)*0.6, "Resources/Play.bmp");
@@ -156,6 +205,7 @@ void MainMenu::DrawMainMenu()
 			glutGet(GLUT_WINDOW_WIDTH)*0.2, glutGet(GLUT_WINDOW_HEIGHT)*0.85, glutGet(GLUT_WINDOW_WIDTH)*0.2, glutGet(GLUT_WINDOW_HEIGHT)*0.8, "Resources/ExitMain.bmp");
 		loaded = true;
 	}
+
 #pragma region MousePointing
 
 	if ((mouseX > glutGet(GLUT_WINDOW_WIDTH)*0.05) && (mouseX<glutGet(GLUT_WINDOW_WIDTH)*0.2) && (mouseY>glutGet(GLUT_WINDOW_HEIGHT)*0.6) && (mouseY < glutGet(GLUT_WINDOW_HEIGHT)*0.65))
@@ -209,22 +259,49 @@ void MainMenu::DrawMainMenu()
 
 	glClear(GL_DEPTH_BUFFER_BIT);
 
-	Play->Render(alphamenu);
-	Play->Resize(glutGet(GLUT_WINDOW_WIDTH)*0.05, glutGet(GLUT_WINDOW_HEIGHT)*0.6, glutGet(GLUT_WINDOW_WIDTH)*0.05, glutGet(GLUT_WINDOW_HEIGHT)*0.65,
+	Play->Render(alphamenu, glutGet(GLUT_WINDOW_WIDTH)*0.05, glutGet(GLUT_WINDOW_HEIGHT)*0.6, glutGet(GLUT_WINDOW_WIDTH)*0.05, glutGet(GLUT_WINDOW_HEIGHT)*0.65,
 		glutGet(GLUT_WINDOW_WIDTH)*0.2, glutGet(GLUT_WINDOW_HEIGHT)*0.65, glutGet(GLUT_WINDOW_WIDTH)*0.2, glutGet(GLUT_WINDOW_HEIGHT)*0.6);
 
-	Option->Render(alphamenu);
-	Option->Resize(glutGet(GLUT_WINDOW_WIDTH)*0.05, glutGet(GLUT_WINDOW_HEIGHT)*0.7, glutGet(GLUT_WINDOW_WIDTH)*0.05, glutGet(GLUT_WINDOW_HEIGHT)*0.75,
+	Option->Render(alphamenu, glutGet(GLUT_WINDOW_WIDTH)*0.05, glutGet(GLUT_WINDOW_HEIGHT)*0.7, glutGet(GLUT_WINDOW_WIDTH)*0.05, glutGet(GLUT_WINDOW_HEIGHT)*0.75,
 		glutGet(GLUT_WINDOW_WIDTH)*0.2, glutGet(GLUT_WINDOW_HEIGHT)*0.75, glutGet(GLUT_WINDOW_WIDTH)*0.2, glutGet(GLUT_WINDOW_HEIGHT)*0.7);
 
-	Exit->Render(alphamenu);
-	Exit->Resize(glutGet(GLUT_WINDOW_WIDTH)*0.05, glutGet(GLUT_WINDOW_HEIGHT)*0.8, glutGet(GLUT_WINDOW_WIDTH)*0.05, glutGet(GLUT_WINDOW_HEIGHT)*0.85,
+	Exit->Render(alphamenu, glutGet(GLUT_WINDOW_WIDTH)*0.05, glutGet(GLUT_WINDOW_HEIGHT)*0.8, glutGet(GLUT_WINDOW_WIDTH)*0.05, glutGet(GLUT_WINDOW_HEIGHT)*0.85,
 		glutGet(GLUT_WINDOW_WIDTH)*0.2, glutGet(GLUT_WINDOW_HEIGHT)*0.85, glutGet(GLUT_WINDOW_WIDTH)*0.2, glutGet(GLUT_WINDOW_HEIGHT)*0.8);
 
-	Insanitarium->Resize(glutGet(GLUT_WINDOW_WIDTH)*0.02, glutGet(GLUT_WINDOW_HEIGHT)*0.13, glutGet(GLUT_WINDOW_WIDTH)*0.02, glutGet(GLUT_WINDOW_HEIGHT)*0.43,
-		glutGet(GLUT_WINDOW_WIDTH)*0.98, glutGet(GLUT_WINDOW_HEIGHT)*0.43, glutGet(GLUT_WINDOW_WIDTH)*0.98, glutGet(GLUT_WINDOW_HEIGHT)*0.13);
-	Insanitarium->Render(alphamenu);
+	Insanitarium->Render(alphamenu, glutGet(GLUT_WINDOW_WIDTH)*0.02, glutGet(GLUT_WINDOW_HEIGHT)*0.03, glutGet(GLUT_WINDOW_WIDTH)*0.02, glutGet(GLUT_WINDOW_HEIGHT)*0.33,
+		glutGet(GLUT_WINDOW_WIDTH)*0.98, glutGet(GLUT_WINDOW_HEIGHT)*0.33, glutGet(GLUT_WINDOW_WIDTH)*0.98, glutGet(GLUT_WINDOW_HEIGHT)*0.03);
 
+	glBegin(GL_QUADS);
+	glColor4f(0, 0, 0, alphamenu);
+	glVertex2f(0, glutGet(GLUT_WINDOW_HEIGHT)*0.03);
+	glVertex2f(0, glutGet(GLUT_WINDOW_HEIGHT)*0.33);
+	glVertex2f(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT)*0.33);
+	glVertex2f(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT)*0.03);
+	glEnd();
+
+	glBegin(GL_QUADS);
+	glColor4f(0, 0, 0, alphamenu);
+	glVertex2f(0, glutGet(GLUT_WINDOW_HEIGHT)*0.6);
+	glVertex2f(0, glutGet(GLUT_WINDOW_HEIGHT)*0.65);
+	glVertex2f(glutGet(GLUT_WINDOW_WIDTH)*0.2, glutGet(GLUT_WINDOW_HEIGHT)*0.65);
+	glVertex2f(glutGet(GLUT_WINDOW_WIDTH)*0.2, glutGet(GLUT_WINDOW_HEIGHT)*0.6);
+	glEnd();
+
+	glBegin(GL_QUADS);
+	glColor4f(0, 0, 0, alphamenu);
+	glVertex2f(0, glutGet(GLUT_WINDOW_HEIGHT)*0.7);
+	glVertex2f(0, glutGet(GLUT_WINDOW_HEIGHT)*0.75);
+	glVertex2f(glutGet(GLUT_WINDOW_WIDTH)*0.2, glutGet(GLUT_WINDOW_HEIGHT)*0.75);
+	glVertex2f(glutGet(GLUT_WINDOW_WIDTH)*0.2, glutGet(GLUT_WINDOW_HEIGHT)*0.7);
+	glEnd();
+
+	glBegin(GL_QUADS);
+	glColor4f(0, 0, 0, alphamenu);
+	glVertex2f(0, glutGet(GLUT_WINDOW_HEIGHT)*0.8);
+	glVertex2f(0, glutGet(GLUT_WINDOW_HEIGHT)*0.85);
+	glVertex2f(glutGet(GLUT_WINDOW_WIDTH)*0.2, glutGet(GLUT_WINDOW_HEIGHT)*0.85);
+	glVertex2f(glutGet(GLUT_WINDOW_WIDTH)*0.2, glutGet(GLUT_WINDOW_HEIGHT)*0.8);
+	glEnd();
 	if (iffade)
 	{
 		alphamenu -= 0.01;
@@ -250,6 +327,17 @@ void MainMenu::FadeMainMenu()
 
 void MainMenu::DrawOptions()
 {
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	glOrtho(0.0, glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), 0.0, -1.0, 10.0);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glDisable(GL_CULL_FACE);
+
+	glDisable(GL_LIGHTING);
+	glEnable(GL_BLEND);
+
 	musicOption = music / 10;
 	soundOption = sound / 10;
 	mouseOption = mouseSensitivity * 10000;
@@ -313,6 +401,11 @@ void MainMenu::DrawOptions()
 	mouseRight3.x = glutGet(GLUT_WINDOW_WIDTH)*0.83;
 	mouseRight3.y = glutGet(GLUT_WINDOW_HEIGHT)*0.64;
 
+	resolution1.x = glutGet(GLUT_WINDOW_WIDTH)*0.6;
+	resolution1.y = glutGet(GLUT_WINDOW_HEIGHT)*0.77;
+
+	resolution2.x = glutGet(GLUT_WINDOW_WIDTH)*0.78;
+	resolution2.y = glutGet(GLUT_WINDOW_HEIGHT)*0.77;
 #pragma endregion
 
 	if (!loadedOptions)
@@ -323,7 +416,7 @@ void MainMenu::DrawOptions()
 		Option1 = new TextBox(glutGet(GLUT_WINDOW_WIDTH)*0.425, glutGet(GLUT_WINDOW_HEIGHT)*0.37, glutGet(GLUT_WINDOW_WIDTH)*0.425, glutGet(GLUT_WINDOW_HEIGHT)*0.42,
 			glutGet(GLUT_WINDOW_WIDTH)*0.575, glutGet(GLUT_WINDOW_HEIGHT)*0.42, glutGet(GLUT_WINDOW_WIDTH)*0.575, glutGet(GLUT_WINDOW_HEIGHT)*0.37, "Resources/Options.bmp");
 
-		Cancel=new TextBox(glutGet(GLUT_WINDOW_WIDTH)*0.6, glutGet(GLUT_WINDOW_HEIGHT)*0.83, glutGet(GLUT_WINDOW_WIDTH)*0.6, glutGet(GLUT_WINDOW_HEIGHT)*0.88,
+		Cancel = new TextBox(glutGet(GLUT_WINDOW_WIDTH)*0.6, glutGet(GLUT_WINDOW_HEIGHT)*0.83, glutGet(GLUT_WINDOW_WIDTH)*0.6, glutGet(GLUT_WINDOW_HEIGHT)*0.88,
 			glutGet(GLUT_WINDOW_WIDTH)*0.75, glutGet(GLUT_WINDOW_HEIGHT)*0.88, glutGet(GLUT_WINDOW_WIDTH)*0.75, glutGet(GLUT_WINDOW_HEIGHT)*0.83, "Resources/Cancel.bmp");
 
 		MusicVol = new TextBox(glutGet(GLUT_WINDOW_WIDTH)*0.15, glutGet(GLUT_WINDOW_HEIGHT)*0.47, glutGet(GLUT_WINDOW_WIDTH)*0.15, glutGet(GLUT_WINDOW_HEIGHT)*0.52,
@@ -333,8 +426,29 @@ void MainMenu::DrawOptions()
 			glutGet(GLUT_WINDOW_WIDTH)*0.44, glutGet(GLUT_WINDOW_HEIGHT)*0.59, glutGet(GLUT_WINDOW_WIDTH)*0.44, glutGet(GLUT_WINDOW_HEIGHT)*0.54, "Resources/SoundVol.bmp");
 
 		MouseSen = new TextBox(glutGet(GLUT_WINDOW_WIDTH)*0.15, glutGet(GLUT_WINDOW_HEIGHT)*0.61, glutGet(GLUT_WINDOW_WIDTH)*0.15, glutGet(GLUT_WINDOW_HEIGHT)*0.66,
-			glutGet(GLUT_WINDOW_WIDTH)*0.44, glutGet(GLUT_WINDOW_HEIGHT)*0.66, glutGet(GLUT_WINDOW_WIDTH)*0.44, glutGet(GLUT_WINDOW_HEIGHT)*0.61, "Resources/SoundVol.bmp");
+			glutGet(GLUT_WINDOW_WIDTH)*0.44, glutGet(GLUT_WINDOW_HEIGHT)*0.66, glutGet(GLUT_WINDOW_WIDTH)*0.44, glutGet(GLUT_WINDOW_HEIGHT)*0.61, "Resources/MouseSen.bmp");
 
+		WindowedYes = new TextBox(glutGet(GLUT_WINDOW_WIDTH)*0.58, glutGet(GLUT_WINDOW_HEIGHT)*0.7, glutGet(GLUT_WINDOW_WIDTH)*0.58, glutGet(GLUT_WINDOW_HEIGHT)*0.75,
+			glutGet(GLUT_WINDOW_WIDTH)*0.68, glutGet(GLUT_WINDOW_HEIGHT)*0.75, glutGet(GLUT_WINDOW_WIDTH)*0.68, glutGet(GLUT_WINDOW_HEIGHT)*0.7, "Resources/Yes.bmp");
+
+		WindowedYes = new TextBox(glutGet(GLUT_WINDOW_WIDTH)*0.58, glutGet(GLUT_WINDOW_HEIGHT)*0.7, glutGet(GLUT_WINDOW_WIDTH)*0.58, glutGet(GLUT_WINDOW_HEIGHT)*0.75,
+			glutGet(GLUT_WINDOW_WIDTH)*0.68, glutGet(GLUT_WINDOW_HEIGHT)*0.75, glutGet(GLUT_WINDOW_WIDTH)*0.68, glutGet(GLUT_WINDOW_HEIGHT)*0.7, "Resources/Yes.bmp");
+
+		WindowedNo = new TextBox(glutGet(GLUT_WINDOW_WIDTH)*0.7, glutGet(GLUT_WINDOW_HEIGHT)*0.7, glutGet(GLUT_WINDOW_WIDTH)*0.7, glutGet(GLUT_WINDOW_HEIGHT)*0.75,
+			glutGet(GLUT_WINDOW_WIDTH)*0.8, glutGet(GLUT_WINDOW_HEIGHT)*0.75, glutGet(GLUT_WINDOW_WIDTH)*0.8, glutGet(GLUT_WINDOW_HEIGHT)*0.7, "Resources/No.bmp");
+
+		Windowed = new TextBox(glutGet(GLUT_WINDOW_WIDTH)*0.15, glutGet(GLUT_WINDOW_HEIGHT)*0.68, glutGet(GLUT_WINDOW_WIDTH)*0.15, glutGet(GLUT_WINDOW_HEIGHT)*0.73,
+			glutGet(GLUT_WINDOW_WIDTH)*0.44, glutGet(GLUT_WINDOW_HEIGHT)*0.73, glutGet(GLUT_WINDOW_WIDTH)*0.44, glutGet(GLUT_WINDOW_HEIGHT)*0.68, "Resources/Windowed.bmp");
+
+		Resolution = new TextBox(glutGet(GLUT_WINDOW_WIDTH)*0.15, glutGet(GLUT_WINDOW_HEIGHT)*0.74, glutGet(GLUT_WINDOW_WIDTH)*0.15, glutGet(GLUT_WINDOW_HEIGHT)*0.79,
+			glutGet(GLUT_WINDOW_WIDTH)*0.44, glutGet(GLUT_WINDOW_HEIGHT)*0.79, glutGet(GLUT_WINDOW_WIDTH)*0.44, glutGet(GLUT_WINDOW_HEIGHT)*0.74, "Resources/Resolution.bmp");
+		
+		Res1280x720 = new TextBox(glutGet(GLUT_WINDOW_WIDTH)*0.61, glutGet(GLUT_WINDOW_HEIGHT)*0.74, glutGet(GLUT_WINDOW_WIDTH)*0.61, glutGet(GLUT_WINDOW_HEIGHT)*0.78,
+			glutGet(GLUT_WINDOW_WIDTH)*0.68, glutGet(GLUT_WINDOW_HEIGHT)*0.78, glutGet(GLUT_WINDOW_WIDTH)*0.68, glutGet(GLUT_WINDOW_HEIGHT)*0.74, "Resources/resHD.bmp");
+		
+		ResHD = new TextBox(glutGet(GLUT_WINDOW_WIDTH)*0.79, glutGet(GLUT_WINDOW_HEIGHT)*0.74, glutGet(GLUT_WINDOW_WIDTH)*0.79, glutGet(GLUT_WINDOW_HEIGHT)*0.8,
+			glutGet(GLUT_WINDOW_WIDTH)*0.86, glutGet(GLUT_WINDOW_HEIGHT)*0.8, glutGet(GLUT_WINDOW_WIDTH)*0.86, glutGet(GLUT_WINDOW_HEIGHT)*0.74, "Resources/res1280x720.bmp");
+		
 		loadedOptions = true;
 	}//£adowanie tekstów
 
@@ -372,17 +486,25 @@ void MainMenu::DrawOptions()
 
 #pragma endregion
 
-	Save->Render(alphamenu);
-	Save->Resize(glutGet(GLUT_WINDOW_WIDTH)*0.25, glutGet(GLUT_WINDOW_HEIGHT)*0.83, glutGet(GLUT_WINDOW_WIDTH)*0.25, glutGet(GLUT_WINDOW_HEIGHT)*0.88,
+	Save->Render(alphamenu, glutGet(GLUT_WINDOW_WIDTH)*0.25, glutGet(GLUT_WINDOW_HEIGHT)*0.83, glutGet(GLUT_WINDOW_WIDTH)*0.25, glutGet(GLUT_WINDOW_HEIGHT)*0.88,
 		glutGet(GLUT_WINDOW_WIDTH)*0.4, glutGet(GLUT_WINDOW_HEIGHT)*0.88, glutGet(GLUT_WINDOW_WIDTH)*0.4, glutGet(GLUT_WINDOW_HEIGHT)*0.83);
 
-	Option1->Render(alphamenu);
-	Option1->Resize(glutGet(GLUT_WINDOW_WIDTH)*0.425, glutGet(GLUT_WINDOW_HEIGHT)*0.37, glutGet(GLUT_WINDOW_WIDTH)*0.425, glutGet(GLUT_WINDOW_HEIGHT)*0.42,
+	Option1->Render(alphamenu, glutGet(GLUT_WINDOW_WIDTH)*0.425, glutGet(GLUT_WINDOW_HEIGHT)*0.37, glutGet(GLUT_WINDOW_WIDTH)*0.425, glutGet(GLUT_WINDOW_HEIGHT)*0.42,
 		glutGet(GLUT_WINDOW_WIDTH)*0.575, glutGet(GLUT_WINDOW_HEIGHT)*0.42, glutGet(GLUT_WINDOW_WIDTH)*0.575, glutGet(GLUT_WINDOW_HEIGHT)*0.37);
-
-	Cancel->Render(alphamenu);
-	Cancel->Resize(glutGet(GLUT_WINDOW_WIDTH)*0.6, glutGet(GLUT_WINDOW_HEIGHT)*0.83, glutGet(GLUT_WINDOW_WIDTH)*0.6, glutGet(GLUT_WINDOW_HEIGHT)*0.88,
+	
+	Cancel->Render(alphamenu, glutGet(GLUT_WINDOW_WIDTH)*0.6, glutGet(GLUT_WINDOW_HEIGHT)*0.83, glutGet(GLUT_WINDOW_WIDTH)*0.6, glutGet(GLUT_WINDOW_HEIGHT)*0.88,
 		glutGet(GLUT_WINDOW_WIDTH)*0.75, glutGet(GLUT_WINDOW_HEIGHT)*0.88, glutGet(GLUT_WINDOW_WIDTH)*0.75, glutGet(GLUT_WINDOW_HEIGHT)*0.83);
+
+	Insanitarium->Render(alphamenu, glutGet(GLUT_WINDOW_WIDTH)*0.02, glutGet(GLUT_WINDOW_HEIGHT)*0.03, glutGet(GLUT_WINDOW_WIDTH)*0.02, glutGet(GLUT_WINDOW_HEIGHT)*0.33,
+		glutGet(GLUT_WINDOW_WIDTH)*0.98, glutGet(GLUT_WINDOW_HEIGHT)*0.33, glutGet(GLUT_WINDOW_WIDTH)*0.98, glutGet(GLUT_WINDOW_HEIGHT)*0.03);
+
+	glBegin(GL_QUADS);
+	glColor4f(0, 0, 0, alphamenu);
+	glVertex2f(0, glutGet(GLUT_WINDOW_HEIGHT)*0.03);
+	glVertex2f(0, glutGet(GLUT_WINDOW_HEIGHT)*0.33);
+	glVertex2f(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT)*0.33);
+	glVertex2f(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT)*0.03);
+	glEnd();
 
 #pragma region MusicVol
 
@@ -441,8 +563,7 @@ void MainMenu::DrawOptions()
 		}
 	}
 
-	MusicVol->Render(alphamenu);
-	MusicVol->Resize(glutGet(GLUT_WINDOW_WIDTH)*0.15, glutGet(GLUT_WINDOW_HEIGHT)*0.47, glutGet(GLUT_WINDOW_WIDTH)*0.15, glutGet(GLUT_WINDOW_HEIGHT)*0.52,
+	MusicVol->Render(alphamenu, glutGet(GLUT_WINDOW_WIDTH)*0.15, glutGet(GLUT_WINDOW_HEIGHT)*0.47, glutGet(GLUT_WINDOW_WIDTH)*0.15, glutGet(GLUT_WINDOW_HEIGHT)*0.52,
 		glutGet(GLUT_WINDOW_WIDTH)*0.44, glutGet(GLUT_WINDOW_HEIGHT)*0.52, glutGet(GLUT_WINDOW_WIDTH)*0.44, glutGet(GLUT_WINDOW_HEIGHT)*0.47);
 
 	///////////////////////////Pasek zmiany opcji
@@ -522,8 +643,7 @@ void MainMenu::DrawOptions()
 		}
 	}
 
-	SoundVol->Render(alphamenu);
-	SoundVol->Resize(glutGet(GLUT_WINDOW_WIDTH)*0.15, glutGet(GLUT_WINDOW_HEIGHT)*0.54, glutGet(GLUT_WINDOW_WIDTH)*0.15, glutGet(GLUT_WINDOW_HEIGHT)*0.59,
+	SoundVol->Render(alphamenu, glutGet(GLUT_WINDOW_WIDTH)*0.15, glutGet(GLUT_WINDOW_HEIGHT)*0.54, glutGet(GLUT_WINDOW_WIDTH)*0.15, glutGet(GLUT_WINDOW_HEIGHT)*0.59,
 		glutGet(GLUT_WINDOW_WIDTH)*0.44, glutGet(GLUT_WINDOW_HEIGHT)*0.59, glutGet(GLUT_WINDOW_WIDTH)*0.44, glutGet(GLUT_WINDOW_HEIGHT)*0.54);
 
 	///////////////////////////Pasek zmiany opcji
@@ -580,8 +700,7 @@ void MainMenu::DrawOptions()
 
 	}
 
-	MouseSen->Render(alphamenu);
-	MouseSen->Resize(glutGet(GLUT_WINDOW_WIDTH)*0.15, glutGet(GLUT_WINDOW_HEIGHT)*0.61, glutGet(GLUT_WINDOW_WIDTH)*0.15, glutGet(GLUT_WINDOW_HEIGHT)*0.66,
+	MouseSen->Render(alphamenu, glutGet(GLUT_WINDOW_WIDTH)*0.15, glutGet(GLUT_WINDOW_HEIGHT)*0.61, glutGet(GLUT_WINDOW_WIDTH)*0.15, glutGet(GLUT_WINDOW_HEIGHT)*0.66,
 		glutGet(GLUT_WINDOW_WIDTH)*0.44, glutGet(GLUT_WINDOW_HEIGHT)*0.66, glutGet(GLUT_WINDOW_WIDTH)*0.44, glutGet(GLUT_WINDOW_HEIGHT)*0.61);
 
 	for (float i = 0;i < 10;i++)
@@ -609,7 +728,8 @@ void MainMenu::DrawOptions()
 		}
 	}
 
-	SoundVol->Render(alphamenu);
+	SoundVol->Render(alphamenu, glutGet(GLUT_WINDOW_WIDTH)*0.15, glutGet(GLUT_WINDOW_HEIGHT)*0.54, glutGet(GLUT_WINDOW_WIDTH)*0.15, glutGet(GLUT_WINDOW_HEIGHT)*0.59,
+		glutGet(GLUT_WINDOW_WIDTH)*0.44, glutGet(GLUT_WINDOW_HEIGHT)*0.59, glutGet(GLUT_WINDOW_WIDTH)*0.44, glutGet(GLUT_WINDOW_HEIGHT)*0.54);
 
 	///////////////////////////Pasek zmiany opcji
 	glBegin(GL_TRIANGLES);
@@ -630,13 +750,127 @@ void MainMenu::DrawOptions()
 
 #pragma endregion
 
+#pragma region Windowed
+
+	WindowedYes->Render(alphamenu,glutGet(GLUT_WINDOW_WIDTH)*0.58, glutGet(GLUT_WINDOW_HEIGHT)*0.7, glutGet(GLUT_WINDOW_WIDTH)*0.58, glutGet(GLUT_WINDOW_HEIGHT)*0.75,
+		glutGet(GLUT_WINDOW_WIDTH)*0.68, glutGet(GLUT_WINDOW_HEIGHT)*0.75, glutGet(GLUT_WINDOW_WIDTH)*0.68, glutGet(GLUT_WINDOW_HEIGHT)*0.7);
+
+	WindowedNo->Render(alphamenu,glutGet(GLUT_WINDOW_WIDTH)*0.7, glutGet(GLUT_WINDOW_HEIGHT)*0.7, glutGet(GLUT_WINDOW_WIDTH)*0.7, glutGet(GLUT_WINDOW_HEIGHT)*0.75,
+		glutGet(GLUT_WINDOW_WIDTH)*0.8, glutGet(GLUT_WINDOW_HEIGHT)*0.75, glutGet(GLUT_WINDOW_WIDTH)*0.8, glutGet(GLUT_WINDOW_HEIGHT)*0.7);
+
+	Windowed->Render(alphamenu,glutGet(GLUT_WINDOW_WIDTH)*0.15, glutGet(GLUT_WINDOW_HEIGHT)*0.7, glutGet(GLUT_WINDOW_WIDTH)*0.15, glutGet(GLUT_WINDOW_HEIGHT)*0.75,
+		glutGet(GLUT_WINDOW_WIDTH)*0.44, glutGet(GLUT_WINDOW_HEIGHT)*0.75, glutGet(GLUT_WINDOW_WIDTH)*0.44, glutGet(GLUT_WINDOW_HEIGHT)*0.7);
+
+	if (Window || (mouseX > glutGet(GLUT_WINDOW_WIDTH)*0.58 && mouseX< glutGet(GLUT_WINDOW_WIDTH)*0.68 && mouseY> glutGet(GLUT_WINDOW_HEIGHT)*0.7 && mouseY < glutGet(GLUT_WINDOW_HEIGHT)*0.75))
+	{
+		WindowedYes->ChangeTexture("Resources/Yes_choice.bmp");
+		if (ifSoundOptions9)
+		{
+			MenuElement.Play2D("Resources/Sounds/menu_nav.ogg", 0.2*sound / 100, false);
+			ifSoundOptions9 = false;
+		}
+	}
+	else
+	{
+		WindowedYes->ChangeTexture("Resources/Yes.bmp");
+		ifSoundOptions9 = true;
+	}
+
+	if (!Window || (mouseX > glutGet(GLUT_WINDOW_WIDTH)*0.7 && mouseX< glutGet(GLUT_WINDOW_WIDTH)*0.8 && mouseY> glutGet(GLUT_WINDOW_HEIGHT)*0.7 && mouseY < glutGet(GLUT_WINDOW_HEIGHT)*0.75))
+	{
+		WindowedNo->ChangeTexture("Resources/No_choice.bmp");
+		if (ifSoundOptions10)
+		{
+			MenuElement.Play2D("Resources/Sounds/menu_nav.ogg", 0.2*sound / 100, false);
+			ifSoundOptions10 = false;
+		}
+	}
+	else
+	{
+		WindowedNo->ChangeTexture("Resources/No.bmp");
+		ifSoundOptions10 = true;
+	}
+
+#pragma endregion
+
+#pragma region Resoultion
+
+	radius = glutGet(GLUT_WINDOW_WIDTH)*0.005;
+
+	if (Window)
+	{
+		Resolution->Render(alphamenu, glutGet(GLUT_WINDOW_WIDTH)*0.15, glutGet(GLUT_WINDOW_HEIGHT)*0.76, glutGet(GLUT_WINDOW_WIDTH)*0.15, glutGet(GLUT_WINDOW_HEIGHT)*0.81,
+			glutGet(GLUT_WINDOW_WIDTH)*0.44, glutGet(GLUT_WINDOW_HEIGHT)*0.81, glutGet(GLUT_WINDOW_WIDTH)*0.44, glutGet(GLUT_WINDOW_HEIGHT)*0.76);
+
+		ResHD->Render(alphamenu, glutGet(GLUT_WINDOW_WIDTH)*0.61, glutGet(GLUT_WINDOW_HEIGHT)*0.76, glutGet(GLUT_WINDOW_WIDTH)*0.61, glutGet(GLUT_WINDOW_HEIGHT)*0.82,
+			glutGet(GLUT_WINDOW_WIDTH)*0.68, glutGet(GLUT_WINDOW_HEIGHT)*0.82, glutGet(GLUT_WINDOW_WIDTH)*0.68, glutGet(GLUT_WINDOW_HEIGHT)*0.76);
+
+		Res1280x720->Render(alphamenu, glutGet(GLUT_WINDOW_WIDTH)*0.79, glutGet(GLUT_WINDOW_HEIGHT)*0.76, glutGet(GLUT_WINDOW_WIDTH)*0.79, glutGet(GLUT_WINDOW_HEIGHT)*0.81,
+			glutGet(GLUT_WINDOW_WIDTH)*0.86, glutGet(GLUT_WINDOW_HEIGHT)*0.81, glutGet(GLUT_WINDOW_WIDTH)*0.86, glutGet(GLUT_WINDOW_HEIGHT)*0.76);		
+
+		if (MainMenu::IfMouseInCircle(mousePoint, resolution1, radius))
+		{
+			res1Color = 0;
+			if (ifSoundOptions11)
+			{
+				MenuElement.Play2D("Resources/Sounds/menu_nav.ogg", 0.2*sound / 100, false);
+				ifSoundOptions11 = false;
+			}
+		}
+		else
+		{
+			res1Color = 1;
+			ifSoundOptions11 = true;
+		}
+
+
+		if (MainMenu::IfMouseInCircle(mousePoint, resolution2, radius))
+		{
+			res2Color = 0;
+			if (ifSoundOptions12)
+			{
+				MenuElement.Play2D("Resources/Sounds/menu_nav.ogg", 0.2*sound / 100, false);
+				ifSoundOptions12 = false;
+			}
+		}
+		else
+		{
+			res2Color = 1;
+			ifSoundOptions12 = true;
+		}
+
+		glColor3f(1, res1Color, res1Color);
+		glTranslatef(glutGet(GLUT_WINDOW_WIDTH)*0.6, glutGet(GLUT_WINDOW_HEIGHT)*0.78, 0);
+		if (res1)
+			glBegin(GL_POLYGON);
+		else
+			glBegin(GL_LINE_LOOP);
+		for (double i = 0; i < 2 * PI; i += PI / 24)
+			glVertex3f(cos(i) * radius, sin(i) * radius, 0.0);
+		glEnd();
+		glTranslatef(-glutGet(GLUT_WINDOW_WIDTH)*0.6, -glutGet(GLUT_WINDOW_HEIGHT)*0.78, 0);
+
+		glColor3f(1, res2Color, res2Color);
+		glTranslatef(glutGet(GLUT_WINDOW_WIDTH)*0.78, glutGet(GLUT_WINDOW_HEIGHT)*0.78, 0);
+		if (res2)
+			glBegin(GL_POLYGON);
+		else
+			glBegin(GL_LINE_LOOP);
+		for (double i = 0; i < 2 * PI; i += PI / 24)
+			glVertex3f(cos(i) * radius, sin(i) * radius, 0.0);
+		glEnd();
+		glTranslatef(-glutGet(GLUT_WINDOW_WIDTH)*0.78, -glutGet(GLUT_WINDOW_HEIGHT)*0.78, 0);
+	}
+
+#pragma endregion
+	
 	//Pasek menu
 	glBegin(GL_POLYGON);
 	glColor4f(0, 0, 0, alphamenu);
-	glVertex2f(glutGet(GLUT_WINDOW_WIDTH)*0.02, glutGet(GLUT_WINDOW_HEIGHT)*0.35);
-	glVertex2f(glutGet(GLUT_WINDOW_WIDTH)*0.02, glutGet(GLUT_WINDOW_HEIGHT)*0.9);
-	glVertex2f(glutGet(GLUT_WINDOW_WIDTH)*0.98, glutGet(GLUT_WINDOW_HEIGHT)*0.9);
-	glVertex2f(glutGet(GLUT_WINDOW_WIDTH)*0.98, glutGet(GLUT_WINDOW_HEIGHT)*0.35);
+	glVertex2f(0, glutGet(GLUT_WINDOW_HEIGHT)*0.35);
+	glVertex2f(0, glutGet(GLUT_WINDOW_HEIGHT)*0.9);
+	glVertex2f(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT)*0.9);
+	glVertex2f(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT)*0.35);
 	glEnd();
 }
 
@@ -654,6 +888,14 @@ bool MainMenu::IfMouseInTriangle(POINT pt, POINT v1, POINT v2, POINT v3)
 float MainMenu::Sign(POINT p1, POINT p2, POINT p3)
 {
 	return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
+}
+
+bool MainMenu::IfMouseInCircle(POINT pt, POINT v0, float r)
+{
+	if (mouseX>glutGet(GLUT_WINDOW_WIDTH)*0.595 && mouseX<glutGet(GLUT_WINDOW_WIDTH)*0.785 && mouseY>glutGet(GLUT_WINDOW_HEIGHT)*0.76 && mouseY<glutGet(GLUT_WINDOW_HEIGHT)*0.79)
+		return sqrt((pt.x - v0.x) *(pt.x - v0.x) + (pt.y - v0.y) *(pt.y - v0.y)) <= r;
+	else
+		return false;
 }
 
 MainMenu::~MainMenu()

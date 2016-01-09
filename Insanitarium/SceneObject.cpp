@@ -2,7 +2,7 @@
 #include "SceneObject.h"
 
 // Uniwersalny konstruktor, ustawia podstawowe rzeczy.
-CSceneObject::CSceneObject(void)
+SceneObject::SceneObject(void)
 {
 	Position.Set(0.0f, 0.0f, 0.0f);
 	Rotation.Set(0.0f, 0.0f, 0.0f);
@@ -11,7 +11,7 @@ CSceneObject::CSceneObject(void)
 }
 
 // Destruktor - sprz¹tamy po sobie.
-CSceneObject::~CSceneObject(void)
+SceneObject::~SceneObject(void)
 {
 	delete[] Name;
 }

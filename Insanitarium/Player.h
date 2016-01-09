@@ -1,21 +1,23 @@
 #pragma once
 
 // Stan gracza.
-class CPlayer
+class GamePlayer
 {
 
 public:
 	vec3 pos;
 	vec3 dir;
-	vec3 cam; // Przesuniêcie punktu zaczepienia kamery wzglêdem pozycji gracza.
+	vec3 cam;
 	float speed;
 	float velRX, velRY, velM, velS;
-	CCollisionEllipsoid * collisionEllipsoid; // Elipsoida s³u¿¹ca do wykrywania kolizji.
-	void SetPlayerRunningSpeed(float newSpeed = 0.8f);
+	CCollisionEllipsoid * collisionEllipsoid;
+	void SetPlayerRunningSpeed(float newSpeed = 0.7f);
 	void SetPlayerNormalSpeed();
 	void SetPlayerCrouchSpeed(float newSpeed = 0.2f);
+	void KillPlayer();
+	void PickUpKey();
 
-	CPlayer()
+	GamePlayer()
 	{
 		pos.Set(0.0f, 0.0f, 0.0f);
 		dir.Set(0.0f, 0.0f, -1.0f);

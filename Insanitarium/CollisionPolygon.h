@@ -1,6 +1,6 @@
 #pragma once
 
-class CSceneObject;
+class SceneObject;
 
 // Wielok¹t s³u¿¹cy do wykrywania kolizji oraz metody do tego przydatne.
 class CCollisionPolygon {
@@ -9,7 +9,7 @@ public:
 	vec3 * v; // Tablica wierzcho³ków polygonu.
 	int vNum; // Liczba wierzcho³ków.
 
-	CSceneObject * parent; // Element sceny, do którego przynale¿y polygon.
+	SceneObject * parent; // Element sceny, do którego przynale¿y polygon.
 
 	// Konstruktor - utworzenie polygonu na podstawie tablicy wierzcho³ków.
 	// Wszystkie wierzcho³ki musz¹ le¿eæ na jednej p³aszczyŸnie!

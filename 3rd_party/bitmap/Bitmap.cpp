@@ -262,6 +262,5 @@ bool Bitmap::convert8(char* tempData) {
             j--;
         }
     }
-
     return true;
 }

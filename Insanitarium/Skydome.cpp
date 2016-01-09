@@ -2,7 +2,7 @@
 #include "Skydome.h"
 
 
-CSkydome::CSkydome(void) : CSceneObject()
+CSkydome::CSkydome(void) : SceneObject()
 {
 }
 
@@ -13,13 +13,13 @@ CSkydome::~CSkydome(void)
 
 void CSkydome::Initialize(void)
 {
-	_skyTexture = new CTexture("Resources\\Skydome.bmp", GL_LINEAR, GL_LINEAR_MIPMAP_LINEAR);
+	_skyTexture = new Textures("Resources\\Skydome.bmp", GL_LINEAR, GL_LINEAR_MIPMAP_LINEAR);
 	_skyTexture->Load();
 
 	_displayListId = glGenLists(1);
 
 	int Np = 36;
-	float radius = 20.0f;
+	float radius = 50.0f;
 	
 	glNewList(_displayListId, GL_COMPILE);
 	glBegin(GL_QUAD_STRIP);
